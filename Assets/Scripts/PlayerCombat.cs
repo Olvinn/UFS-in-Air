@@ -27,11 +27,18 @@ public class PlayerCombat : MonoBehaviour
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
+        List<int> players = new List<int>();
         foreach (var enemy in hitEnemies)
         {
-            if(enemy.gameObject != this.gameObject)
-                Debug.Log("Удар по " + enemy.name);
+            if (enemy.gameObject != this.gameObject)
+            {
+                Player player = enemy.GetComponent<Player>();
+                if (player)
+                    players.Add(player.id);
+            }
         }
+
+        Client.instance.HitTargets(players);
     }
 
     private void OnDrawGizmosSelected() {

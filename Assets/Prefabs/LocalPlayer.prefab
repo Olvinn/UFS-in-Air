@@ -142,8 +142,8 @@ MonoBehaviour:
   attackRate: 2
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 0
-  keyCode: 0
+    m_Bits: 768
+  keyCode: 32
 --- !u!95 &4166065921770370322
 Animator:
   serializedVersion: 3
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   username: 
-  velocity: {x: 0, y: 0}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!1 &5478506038836111827
 GameObject:
   m_ObjectHideFlags: 0

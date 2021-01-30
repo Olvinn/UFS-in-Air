@@ -14,7 +14,8 @@ public enum Command
 	spawnPlayer,
 	removePlayer,
 	synchPosPlayer,
-	disconnect
+	disconnect,
+	hit
 }
 
 public class Client : MonoBehaviour
@@ -138,7 +139,7 @@ public class Client : MonoBehaviour
 			{
 				byte[] serverMessageAsByteArray = data.ToArray();
 				// Write byte array to socketConnection stream.               
-				stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
+				stream.BeginWrite(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length, null, null);
 			}
 		}
 		catch (SocketException socketException)
@@ -189,7 +190,10 @@ public class Client : MonoBehaviour
 		int playerId = data.ReadInt();
 		Vector3 pos = data.ReadVector3();
 		Vector3 velocity = data.ReadVector3();
-		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
+		bool isUFS = data.ReadBool();
+		bool stunned = data.ReadBool();
+		bool killed = data.ReadBool();
+		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerStats(playerId, pos, velocity, isUFS, stunned, killed));
 	}
 
 	void OnRemovePlayer(int id, Packet data)
@@ -200,4 +204,31 @@ public class Client : MonoBehaviour
 		int playerId = data.ReadInt();
 		ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(playerId));
 	}
+
+	public void SynchPlayerStats(Vector3 pos, Vector3 v, bool isUFS, bool stunned, bool killed)
+    {
+		Packet packet = new Packet(Command.synchPosPlayer);
+		packet.Write(id);
+		packet.Write(pos);
+		packet.Write(v);
+		packet.Write(isUFS);
+		packet.Write(stunned);
+		packet.Write(killed);
+		SendMessage(packet);
+	}
+
+	public void HitTargets(List<int> players)
+    {
+		if (players.Count == 0)
+			return;
+
+		Packet packet = new Packet(Command.hit);
+		packet.Write(id);
+		packet.Write(players.Count);
+
+		foreach (int player in players)
+			packet.Write(player);
+
+		SendMessage(packet);
+    }
 }

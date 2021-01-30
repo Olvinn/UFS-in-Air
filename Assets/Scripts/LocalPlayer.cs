@@ -6,10 +6,6 @@ public class LocalPlayer : Player
 {
     protected override void FixedUpdate()
     {
-        Packet packet = new Packet(Command.synchPosPlayer);
-        packet.Write(Client.instance.id);
-        packet.Write(transform.position);
-        packet.Write(velocity);
-        Client.instance.SendMessage(packet);
+        Client.instance.SynchPlayerStats(transform.position, velocity, isUFS, stunned, killed);
     }
 }

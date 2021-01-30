@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
     public int id;
     public string username;
     public Vector3 velocity;
+    public bool isUFS = false;
+    public bool stunned = false, killed = false;
 
     public void SetUp(int id, string username)
     {
@@ -19,15 +21,4 @@ public class Player : MonoBehaviour
     {
         transform.position += velocity * Time.fixedDeltaTime;
     }
-
-    //private void FixedUpdate()
-    //{
-    //    SendInputToServer();
-    //}
-
-    /// <summary>Sends player input to the server.</summary>
-    //private void SendInputToServer()
-    //{
-    //    ClientSend.SendPlayerStat(transform, velocity);
-    //}
 }
