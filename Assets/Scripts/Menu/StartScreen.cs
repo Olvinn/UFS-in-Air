@@ -1,34 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StartScreen : MonoBehaviour
 {
-    public void StartButton()
-    {
-        Application.LoadLevel(4);
-    }
-
-    public void BackButton()
-    {
-        Application.LoadLevel(0);
-    }
-
-    public static void SetPlayersNumber(int curNum, int maxNum)
-    {
-
-    }
-
-    private RectTransform _transform;
-
-    private void Start()
-    {
-        _transform = GetComponent<RectTransform>();
-    }
+    [SerializeField] Text playersCount;
+    [SerializeField] Button play;
 
     private void Update()
     {
-        _transform.localScale += new Vector3(-1.0f * Time.deltaTime, 1.0f, 1.0f);
+        playersCount.text = $"{Client.instance.roomCount}/6";
 
+        if (Client.instance.roomCount >= 3)
+        {
+            play.interactable = true;
+            playersCount.color = Color.green;
+        }
+        else
+        {
+            play.interactable = false;
+            playersCount.color = Color.red;
+        }
     }
 }

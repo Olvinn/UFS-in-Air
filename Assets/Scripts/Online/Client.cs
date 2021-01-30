@@ -9,14 +9,17 @@ using UnityEngine;
 
 public enum Command
 {
-	handshake,
-	connectToRoom,
-	spawnPlayer,
-	removePlayer,
-	synchPosPlayer, 
+    handshake,
+    connectToRoom,
+    disconnectFromRoom,
+    addPlayer,
+    removePlayer,
+    synchPosPlayer,
     synchStatsPlayer,
     disconnect,
-	hit
+    hit,
+    ping,
+    start
 }
 
 public class Client : MonoBehaviour
@@ -26,39 +29,44 @@ public class Client : MonoBehaviour
 
     public string ip;
     public int port;
-    public int id = 0;
-    public int roomId = 0;
+
+    public int id = -1;
+    public int roomId = -1;
+    public int roomCount = 0;
+
     public TCP tcp;
 
     private bool isConnected = false;
 
     public delegate void Execute(int id, Packet data);
-	public Dictionary<Command, Execute> packetHandlers;
+    public Dictionary<Command, Execute> packetHandlers;
 
-	void Awake()
-	{
-		if (instance == null)
-		{
-			instance = this;
-		}
-		else if (instance != this)
-		{
-			Debug.Log("Instance already exists, destroying object!");
-			Destroy(this);
-		}
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Debug.Log("Instance already exists, destroying object!");
+            Destroy(this);
+        }
 
-		packetHandlers = new Dictionary<Command, Execute>()
-		{
-			{ Command.handshake, HandshakeCallback },
-			{ Command.connectToRoom, OnConnectToRoom },
-			{ Command.spawnPlayer, OnSpawnPlayer },
+        packetHandlers = new Dictionary<Command, Execute>()
+        {
+            { Command.handshake, HandshakeCallback },
+            { Command.connectToRoom, OnConnectToRoom },
+            { Command.disconnectFromRoom, OnDisconnectFromRoom },
+            { Command.addPlayer, OnAddPlayer },
             { Command.synchPosPlayer, OnSynchPlayerPos },
             { Command.synchStatsPlayer, OnSynchPlayerStats },
-            { Command.removePlayer, OnRemovePlayer }
+            { Command.removePlayer, OnRemovePlayer },
+            { Command.start, OnStartGame }
         };
 
         DontDestroyOnLoad(this.gameObject);
-	}
+    }
 
     private void Start()
     {
@@ -196,8 +204,11 @@ public class Client : MonoBehaviour
                     using (Packet _packet = new Packet(_packetBytes))
                     {
                         Command _packetId = (Command)_packet.ReadInt();
-                        int id = _packet.ReadInt();
-                        instance.packetHandlers[_packetId](id, _packet); // Call appropriate method to handle the packet
+                        if (_packetId != Command.ping)
+                        {
+                            int id = _packet.ReadInt();
+                            instance.packetHandlers[_packetId](id, _packet); // Call appropriate method to handle the packet
+                        }
                     }
                 });
 
@@ -246,51 +257,61 @@ public class Client : MonoBehaviour
         }
     }
 
-	void HandshakeCallback(int id, Packet data)
-	{
+    void HandshakeCallback(int id, Packet data)
+    {
         Debug.Log("Handshake callback");
-		this.id = id;
+        this.id = id;
+    }
 
-		Packet packet = new Packet(Command.connectToRoom);
-		packet.Write(this.id);
-		packet.Write(1); // room id
-        tcp.SendData(packet);
-	}
-
-	void OnConnectToRoom(int id, Packet data)
+    void OnConnectToRoom(int id, Packet data)
     {
         Debug.Log("Connected to room");
         if (id != this.id)
-			Debug.LogError("Wrong params");
+            Debug.LogError("Wrong params");
 
-		roomId = data.ReadInt();
-		int playersCount = data.ReadInt();
-		for(int i = 0; i < playersCount; i++)
+        roomId = data.ReadInt();
+        int playersCount = data.ReadInt();
+        roomCount = playersCount;
+        for (int i = 0; i < playersCount; i++)
         {
-			int playerId = data.ReadInt();
-			ThreadManager.ExecuteOnMainThread(()=> GameController.instance.SpawnPlayer(playerId, "", Vector3.zero));
+            int playerId = data.ReadInt();
+            ThreadManager.ExecuteOnMainThread(() => GameController.instance.AddPlayer(playerId));
+        }
+    }
+
+    void OnDisconnectFromRoom(int id, Packet data)
+    {
+        if (id == this.id)
+        {
+            roomId = -1;
+            roomCount = 0;
+            ThreadManager.ExecuteOnMainThread(() => GameController.instance.Clear(id));
         }
 
-	}
+        roomCount = data.ReadInt();
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(id));
 
-	void OnSpawnPlayer(int id, Packet data)
-	{
-		if (id != this.id)
-			Debug.LogError("Wrong params");
+    }
 
-		int playerId = data.ReadInt();
-			ThreadManager.ExecuteOnMainThread(() => GameController.instance.SpawnPlayer(playerId, "", Vector3.zero));
-	}
+    void OnAddPlayer(int id, Packet data)
+    {
+        if (id != this.id)
+            Debug.LogError("Wrong params");
 
-	void OnSynchPlayerPos(int id, Packet data)
-	{
-		if (id != this.id)
-			Debug.LogError("Wrong params");
+        int playerId = data.ReadInt();
+        roomCount++;
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.AddPlayer(playerId));
+    }
 
-		int playerId = data.ReadInt();
-		Vector3 pos = data.ReadVector3();
-		Vector3 velocity = data.ReadVector3();
-		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
+    void OnSynchPlayerPos(int id, Packet data)
+    {
+        if (id != this.id)
+            Debug.LogError("Wrong params");
+
+        int playerId = data.ReadInt();
+        Vector3 pos = data.ReadVector3();
+        Vector3 velocity = data.ReadVector3();
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
     }
     void OnSynchPlayerStats(int id, Packet data)
     {
@@ -301,39 +322,69 @@ public class Client : MonoBehaviour
         bool isUFS = data.ReadBool();
         bool stunned = data.ReadBool();
         bool killed = data.ReadBool();
-        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerStats(playerId, isUFS, stunned, killed));
+        bool isHost = data.ReadBool();
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerStats(playerId, isUFS, stunned, killed, isHost));
     }
 
     void OnRemovePlayer(int id, Packet data)
-	{
-		if (id != this.id)
-			Debug.LogError("Wrong params");
-
-		int playerId = data.ReadInt();
-		ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(playerId));
-	}
-
-	public void SynchPlayerPos(Vector3 pos, Vector3 v)
     {
-		Packet packet = new Packet(Command.synchPosPlayer);
-		packet.Write(id);
-		packet.Write(pos);
-		packet.Write(v);
-        tcp.SendData(packet);
-	}
+        if (id != this.id)
+            Debug.LogError("Wrong params");
 
-	public void HitTargets(List<int> players)
+        int playerId = data.ReadInt();
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(playerId));
+    }
+
+    void OnStartGame(int id, Packet data)
     {
-		if (players.Count == 0)
-			return;
+        if (id != this.id)
+            Debug.LogError("Wrong params");
 
-		Packet packet = new Packet(Command.hit);
-		packet.Write(id);
-		packet.Write(players.Count);
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.LoadGameLevel());
+    }
 
-		foreach (int player in players)
-			packet.Write(player);
+    public void SynchPlayerPos(Vector3 pos, Vector3 v)
+    {
+        Packet packet = new Packet(Command.synchPosPlayer);
+        packet.Write(id);
+        packet.Write(pos);
+        packet.Write(v);
+        tcp.SendData(packet);
+    }
+
+    public void HitTargets(List<int> players)
+    {
+        if (players.Count == 0)
+            return;
+
+        Packet packet = new Packet(Command.hit);
+        packet.Write(id);
+        packet.Write(players.Count);
+
+        foreach (int player in players)
+            packet.Write(player);
 
         tcp.SendData(packet);
+    }
+
+    public void ConnectToRoom()
+    {
+        Packet packet = new Packet(Command.connectToRoom);
+        packet.Write(id);
+        packet.Write(1); // room id
+        tcp.SendData(packet);
+    }
+
+    public void DisconnectToRoom()
+    {
+        Packet packet = new Packet(Command.disconnectFromRoom);
+        packet.Write(id);
+        packet.Write(roomId);
+        tcp.SendData(packet);
+    }
+
+    public void StartGame()
+    {
+
     }
 }

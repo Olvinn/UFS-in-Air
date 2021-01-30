@@ -5,15 +5,14 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public int id;
-    public string username;
     public Vector3 velocity = new Vector3();
     public bool isUFS = false;
     public bool stunned = false, killed = false;
+    public bool isHost = false;
 
-    public void SetUp(int id, string username)
+    public void SetUp(int id)
     {
         this.id = id;
-        this.username = username;
         velocity = new Vector3();
     }
 
