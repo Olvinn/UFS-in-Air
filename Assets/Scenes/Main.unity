@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913d979834483154190af1a73b937bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 127.0.0.1
+  ip: 100.84.229.206
   port: 8052
   id: 0
   roomId: 0
