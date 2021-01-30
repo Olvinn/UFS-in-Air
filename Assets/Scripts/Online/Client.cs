@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -49,7 +50,7 @@ public class Client : MonoBehaviour
             { Command.synchPosPlayer, SynchPlayerPosCallback }
         };
 
-		socketConnection = new TcpClient("localhost", 8052);
+		socketConnection = new TcpClient("100.84.206.43", 8052);
 		ConnectToTcpServer();
 	}
 
