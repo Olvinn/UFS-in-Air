@@ -6,6 +6,6 @@ public class LocalPlayer : Player
 {
     protected override void FixedUpdate()
     {
-        Client.instance.SynchPlayerStats(transform.position, velocity, isUFS, stunned, killed);
+         Client.instance.SynchPlayerPos(transform.position, velocity);
     }
 }
