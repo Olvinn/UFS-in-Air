@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -72,5 +73,10 @@ public class GameController : MonoBehaviour
             players[id].stunned = stunned;
             players[id].killed = killed;
         }
+    }
+
+    public void LoadGameScene()
+    {
+        SceneManager.LoadScene("Game");
     }
 }

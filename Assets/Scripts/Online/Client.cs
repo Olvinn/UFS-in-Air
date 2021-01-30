@@ -56,6 +56,8 @@ public class Client : MonoBehaviour
             { Command.synchStatsPlayer, OnSynchPlayerStats },
             { Command.removePlayer, OnRemovePlayer }
         };
+
+        DontDestroyOnLoad(this.gameObject);
 	}
 
     private void Start()
