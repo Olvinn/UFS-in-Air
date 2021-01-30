@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4166065921770370322}
   - component: {fileID: 1671020297396182981}
   - component: {fileID: 4260476288736641381}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: LocalPlayer
   m_TagString: Human
   m_Icon: {fileID: 0}
@@ -194,6 +194,9 @@ MonoBehaviour:
   id: 0
   username: 
   velocity: {x: 0, y: 0, z: 0}
+  isUFS: 0
+  stunned: 0
+  killed: 0
 --- !u!1 &5478506038836111827
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +237,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8780149832698075547}
   - component: {fileID: 6799050508852481506}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: HeadSocket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
