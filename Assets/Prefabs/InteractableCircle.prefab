@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5746256791707898634}
   - component: {fileID: 5746256791707898635}
-  - component: {fileID: 5746256791707898633}
+  - component: {fileID: 1253446609906740109}
   m_Layer: 0
-  m_Name: InteractableBox
+  m_Name: InteractableCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,8 +49,8 @@ MonoBehaviour:
   interactAction:
     m_PersistentCalls:
       m_Calls: []
---- !u!61 &5746256791707898633
-BoxCollider2D:
+--- !u!58 &1253446609906740109
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -63,15 +63,5 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.2, y: 1.2}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
