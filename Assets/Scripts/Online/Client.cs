@@ -45,9 +45,10 @@ public class Client : MonoBehaviour
 		packetHandlers = new Dictionary<Command, Execute>()
 		{
 			{ Command.handshake, HandshakeCallback },
-			{ Command.connectToRoom, ConnectToRoomCallback },
-			{ Command.spawnPlayer, SpawnPlayer },
-            { Command.synchPosPlayer, SynchPlayerPosCallback }
+			{ Command.connectToRoom, OnConnectToRoom },
+			{ Command.spawnPlayer, OnSpawnPlayer },
+            { Command.synchPosPlayer, OnSynchPlayerPos },
+			{ Command.removePlayer, OnRemovePlayer }
         };
 
 		socketConnection = new TcpClient("100.83.45.67", 8052);
@@ -156,7 +157,7 @@ public class Client : MonoBehaviour
 		SendMessage(packet);
 	}
 
-	void ConnectToRoomCallback(int id, Packet data)
+	void OnConnectToRoom(int id, Packet data)
     {
 		if (id != this.id)
 			Debug.LogError("Wrong params");
@@ -171,7 +172,7 @@ public class Client : MonoBehaviour
 
 	}
 
-	void SpawnPlayer(int id, Packet data)
+	void OnSpawnPlayer(int id, Packet data)
 	{
 		if (id != this.id)
 			Debug.LogError("Wrong params");
@@ -180,7 +181,7 @@ public class Client : MonoBehaviour
 			ThreadManager.ExecuteOnMainThread(() => GameController.instance.SpawnPlayer(playerId, "", Vector3.zero));
 	}
 
-	void SynchPlayerPosCallback(int id, Packet data)
+	void OnSynchPlayerPos(int id, Packet data)
 	{
 		if (id != this.id)
 			Debug.LogError("Wrong params");
@@ -189,5 +190,14 @@ public class Client : MonoBehaviour
 		Vector3 pos = data.ReadVector3();
 		Vector3 velocity = data.ReadVector3();
 		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
+	}
+
+	void OnRemovePlayer(int id, Packet data)
+	{
+		if (id != this.id)
+			Debug.LogError("Wrong params");
+
+		int playerId = data.ReadInt();
+		ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(playerId));
 	}
 }

@@ -46,6 +46,15 @@ public class GameController : MonoBehaviour
         players.Add(_id, _player.GetComponent<Player>());
     }
 
+    public void RemovePlayer(int _id)
+    {
+        if (players.ContainsKey(_id))
+        {
+            Destroy(players[_id].gameObject);
+            players.Remove(_id);
+        }
+    }
+
     public void SynchPlayerPos(int _id, Vector3 _position, Vector3 velocity)
     {
         if (players.ContainsKey(_id))

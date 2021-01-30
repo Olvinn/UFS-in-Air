@@ -8,15 +8,14 @@ public class NetworkMovement : MonoBehaviour
 
     public Animator animator;
 
-    private Vector2 velocity;
+    public Player player;
 
-    void Start()
+    void FixedUpdate()
     {
-        
-    }
-
-    void Update()
-    {
-        
+        if (!animator)
+            return;
+        animator.SetFloat("Vertical", player.velocity.x);
+        animator.SetFloat("Horizontal", player.velocity.y);
+        animator.SetFloat("Magnitude", player.velocity.magnitude);
     }
 }
