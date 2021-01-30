@@ -9,6 +9,7 @@ public class LocalPlayer : Player
         Packet packet = new Packet(Command.synchPosPlayer);
         packet.Write(Client.instance.id);
         packet.Write(transform.position);
+        packet.Write(velocity);
         Client.instance.SendMessage(packet);
     }
 }

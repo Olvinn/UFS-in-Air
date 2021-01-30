@@ -46,11 +46,12 @@ public class GameController : MonoBehaviour
         players.Add(_id, _player.GetComponent<Player>());
     }
 
-    public void SynchPlayerPos(int _id, Vector3 _position)
+    public void SynchPlayerPos(int _id, Vector3 _position, Vector3 velocity)
     {
         if (players.ContainsKey(_id))
         {
             players[_id].transform.position = _position;
+            players[_id].velocity = velocity;
         }
     }
 }

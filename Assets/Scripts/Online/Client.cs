@@ -50,7 +50,7 @@ public class Client : MonoBehaviour
             { Command.synchPosPlayer, SynchPlayerPosCallback }
         };
 
-		socketConnection = new TcpClient("100.84.206.43", 8052);
+		socketConnection = new TcpClient("100.83.45.67", 8052);
 		ConnectToTcpServer();
 	}
 
@@ -187,6 +187,7 @@ public class Client : MonoBehaviour
 
 		int playerId = data.ReadInt();
 		Vector3 pos = data.ReadVector3();
-		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos));
+		Vector3 velocity = data.ReadVector3();
+		ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
 	}
 }

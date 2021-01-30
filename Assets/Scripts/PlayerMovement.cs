@@ -9,7 +9,9 @@ public class PlayerMovement : MonoBehaviour
 
     public Animator animator;
 
-    private Vector2 direction;
+    public Player player;
+
+    private Vector2 velocity;
     
     void Update()
     {
@@ -24,14 +26,17 @@ public class PlayerMovement : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
-        direction = new Vector2(moveX, moveY).normalized;
+        velocity = new Vector2(moveX, moveY).normalized;
+        player.velocity = velocity;
     }
 
     public void Move() {
-        rb.velocity = new Vector2(direction.x * moveSpeed, direction.y * moveSpeed);
+        rb.velocity = new Vector2(velocity.x * moveSpeed, velocity.y * moveSpeed);
+
+        if (!animator)
+            return;
         animator.SetFloat("Vertical", rb.velocity.x);
         animator.SetFloat("Horizontal", rb.velocity.y);
         animator.SetFloat("Magnitude", rb.velocity.magnitude);
-
     }
 }
