@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LocalPlayer : Player
 {
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         Packet packet = new Packet(Command.synchPosPlayer);
         packet.Write(Client.instance.id);

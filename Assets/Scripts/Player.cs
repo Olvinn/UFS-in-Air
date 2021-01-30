@@ -6,18 +6,18 @@ public class Player : MonoBehaviour
 {
     public int id;
     public string username;
-    public Vector2 velocity;
+    public Vector3 velocity;
 
     public void SetUp(int id, string username)
     {
         this.id = id;
         this.username = username;
-        velocity = new Vector2();
+        velocity = new Vector3();
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
-        transform.position += (Vector3)velocity * Time.deltaTime;
+        transform.position += velocity * Time.fixedDeltaTime;
     }
 
     //private void FixedUpdate()
