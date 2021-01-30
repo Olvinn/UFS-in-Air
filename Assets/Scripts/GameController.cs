@@ -55,19 +55,12 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void SynchPlayerPos(int id, Vector3 position, Vector3 velocity)
+    public void SynchPlayerStats(int id, Vector3 position, Vector3 velocity, bool isUFS, bool stunned, bool killed)
     {
         if (players.ContainsKey(id))
         {
             players[id].transform.position = position;
             players[id].velocity = velocity;
-        }
-    }
-
-    public void SynchPlayerStats(int id, bool isUFS, bool stunned, bool killed)
-    {
-        if (players.ContainsKey(id))
-        {
             players[id].isUFS = isUFS;
             players[id].stunned = stunned;
             players[id].killed = killed;

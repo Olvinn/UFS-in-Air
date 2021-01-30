@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     public int id;
     public string username;
-    public Vector3 velocity = new Vector3();
+    public Vector3 velocity;
     public bool isUFS = false;
     public bool stunned = false, killed = false;
 
