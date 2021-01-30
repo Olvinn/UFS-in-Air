@@ -50,7 +50,6 @@ public class GameController : MonoBehaviour
     {
         if (players.ContainsKey(_id))
         {
-            Debug.Log(_id);
             players[_id].transform.position = _position;
         }
     }
