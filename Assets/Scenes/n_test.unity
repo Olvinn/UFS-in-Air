@@ -1021,10 +1021,20 @@ PrefabInstance:
       propertyPath: m_UseAutoMass
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4927366957540321733, guid: 8c22b077573e09c478c2e8a4d4e67ee4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5572717637408108355, guid: 8c22b077573e09c478c2e8a4d4e67ee4,
         type: 3}
       propertyPath: m_Name
       value: imposter
+      objectReference: {fileID: 0}
+    - target: {fileID: 6652813112876429351, guid: 8c22b077573e09c478c2e8a4d4e67ee4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7709626128823694952, guid: 8c22b077573e09c478c2e8a4d4e67ee4,
         type: 3}
@@ -1169,6 +1179,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: human
+      objectReference: {fileID: 0}
+    - target: {fileID: 4575918910256358749, guid: bfada5e208ee0b2459b3fde1b6e60e2f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4575918910256358749, guid: bfada5e208ee0b2459b3fde1b6e60e2f,
         type: 3}

@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 4575918910256358736}
   - component: {fileID: 4575918910256358751}
   - component: {fileID: 4575918910256358737}
-  - component: {fileID: 4575918910256358738}
   - component: {fileID: 4575918910256358750}
   - component: {fileID: -1464826911554236112}
   - component: {fileID: 211834652642833525}
+  - component: {fileID: 3175293407888875170}
   m_Layer: 8
   m_Name: human
   m_TagString: Human
@@ -109,32 +109,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &4575918910256358738
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4575918910256358749}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4.59, y: 4.59}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!114 &4575918910256358750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,6 +161,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!70 &3175293407888875170
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4575918910256358749}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.06338507, y: 0.037846267}
+  m_Size: {x: 2.167854, y: 4.262}
+  m_Direction: 0
 --- !u!1 &7754973216598169656
 GameObject:
   m_ObjectHideFlags: 0
