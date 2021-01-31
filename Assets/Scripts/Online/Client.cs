@@ -327,10 +327,7 @@ public class Client : MonoBehaviour
 
     void OnSynchPlayerStats(int id, Packet data)
     {
-        if (id != this.id)
-            Debug.LogError("Wrong params");
-
-        int playerId = data.ReadInt();
+        int playerId = id;
         bool isUFS = data.ReadBool();
         bool stunned = data.ReadBool();
         bool killed = data.ReadBool();

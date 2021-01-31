@@ -22,7 +22,7 @@ public class BotAI : MonoBehaviour
         if(points.Length != 0)
             this.transform.position = points[0].position;
 
-        InvokeRepeating("Patroling2", 0, 5);
+        InvokeRepeating("Patroling2", 0, 2);
     }
 
     void Update()
@@ -51,10 +51,10 @@ public class BotAI : MonoBehaviour
     }
     private void Patroling2()
     {
-        if (agent.velocity.magnitude > 0) return;
+        if (agent.velocity.magnitude > 1) return;
         float angle = Random.value * 360;
         Vector3 dir = new Vector3(Mathf.Sin(angle), Mathf.Cos(angle), 0);
-        float r = 10;
+        float r = Random.value * 10;
         agent.SetDestination(transform.position + dir * r);
     }
 
