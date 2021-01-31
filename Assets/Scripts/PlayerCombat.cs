@@ -12,6 +12,11 @@ public class PlayerCombat : MonoBehaviour
     float nextAttackTime = 0f;
     public LayerMask enemyLayers;
     public KeyCode keyCode;
+    private Rigidbody2D rb;
+
+    private void Start() {
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     void Update()
     {
