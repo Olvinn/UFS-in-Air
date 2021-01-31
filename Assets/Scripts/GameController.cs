@@ -133,13 +133,28 @@ public class GameController : MonoBehaviour
         StartCoroutine(SpawnPlayers(loading));
     }
 
+    public int AliveCount()
+    {
+        int i = 0;
+        foreach (int id in players.Keys)
+            if (players[id])
+                if (!players[id].isUFS && !players[id].isBot) i++;
+        return i;
+    }
+
+    public int UFSCount()
+    {
+        int i = 0;
+        foreach (int id in players.Keys)
+            if (players[id])
+                if (players[id].isUFS && !players[id].isBot) i++;
+        return i;
+    }
+
     IEnumerator SpawnPlayers(AsyncOperation loading)
     {
         while (!loading.isDone)
-        {
-            Debug.Log(loading.isDone);
             yield return new WaitForSeconds(1);
-        }
 
         Client.instance.SendReadyForPlay();
     }

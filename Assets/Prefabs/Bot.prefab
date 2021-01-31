@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b6f9d216d030d94dac4db877292132a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator: {fileID: 1828791879825110064}
   points: []
   player: {fileID: 7637489351912439799}
 --- !u!114 &7637489351912439799

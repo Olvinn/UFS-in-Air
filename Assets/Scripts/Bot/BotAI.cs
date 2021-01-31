@@ -35,9 +35,9 @@ public class BotAI : MonoBehaviour
         // if(!agent.pathPending && agent.remainingDistance < 0.5f)
         //     Patroling();
 
-        // animator.SetFloat("Vertical", points[destPoint].position.x);
-        // animator.SetFloat("Horizontal", points[destPoint].position.y);
-        // animator.SetFloat("Magnitude", rb.velocity.magnitude);
+        animator.SetFloat("Vertical", player.velocity.x);
+        animator.SetFloat("Horizontal", player.velocity.y);
+        animator.SetFloat("Magnitude", player.velocity.magnitude);
     }
 
     IEnumerator DoPatroling() {
