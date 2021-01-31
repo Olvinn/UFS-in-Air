@@ -23,7 +23,7 @@ public class GameController : MonoBehaviour
         else if (instance != this)
         {
             Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -131,6 +131,11 @@ public class GameController : MonoBehaviour
     {
         AsyncOperation loading = SceneManager.LoadSceneAsync("Game");
         StartCoroutine(SpawnPlayers(loading));
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     public int AliveCount()
