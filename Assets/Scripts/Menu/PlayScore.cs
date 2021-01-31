@@ -6,6 +6,13 @@ using UnityEngine.UI;
 public class PlayScore : MonoBehaviour
 {
     [SerializeField] Text alive, infected, role;
+    [SerializeField] GameObject UFSwin, Humwin;
+
+    private void Start()
+    {
+        GameController.instance.OnHumansWin.AddListener(() => Humwin.SetActive(true));
+        GameController.instance.OnUFSWin.AddListener(() => UFSwin.SetActive(true));
+    }
 
     private void Update()
     {

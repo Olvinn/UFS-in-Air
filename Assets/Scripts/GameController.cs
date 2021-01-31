@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
@@ -13,6 +14,8 @@ public class GameController : MonoBehaviour
     public GameObject localPlayerPrefab;
     public GameObject playerPrefab;
     public GameObject botPrefab;
+
+    public UnityEvent OnUFSWin, OnHumansWin;
 
     private void Awake()
     {

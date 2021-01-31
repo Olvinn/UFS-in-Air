@@ -23,7 +23,9 @@ public enum Command
     load,
     ready,
     spawnPlayer,
-    botStats
+    botStats,
+    UFSwin,
+    Humwin
 }
 
 public class Client : MonoBehaviour
@@ -67,7 +69,9 @@ public class Client : MonoBehaviour
             { Command.synchStatsPlayer, OnSynchPlayerStats },
             { Command.removePlayer, OnRemovePlayer },
             { Command.load, OnStartLoadGame },
-            { Command.spawnPlayer, OnSpawnPlayer }
+            { Command.spawnPlayer, OnSpawnPlayer },
+            { Command.Humwin, OnHumansWin },
+            { Command.UFSwin, OnUFSWin }
         };
 
         DontDestroyOnLoad(this.gameObject);
@@ -415,5 +419,14 @@ public class Client : MonoBehaviour
         Packet packet = new Packet(Command.ready);
         packet.Write(id);
         tcp.SendData(packet);
+    }
+
+    public void OnUFSWin(int id, Packet data)
+    {
+        GameController.instance.OnUFSWin?.Invoke();
+    }
+    public void OnHumansWin(int id, Packet data)
+    {
+        GameController.instance.OnHumansWin?.Invoke();
     }
 }
