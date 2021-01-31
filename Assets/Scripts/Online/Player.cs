@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     public Vector3 velocity = new Vector3();
     public bool isUFS = false;
     public bool stunned = false, killed = false;
-    public bool isHost = false;
+    public bool isBot = false;
 
     public void SetUp(int id)
     {

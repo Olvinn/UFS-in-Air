@@ -8,10 +8,11 @@ public class GameController : MonoBehaviour
     public static GameController instance;
 
     public static Dictionary<int, Player> players = new Dictionary<int, Player>();
-
+    int botInd = 0;
 
     public GameObject localPlayerPrefab;
     public GameObject playerPrefab;
+    public GameObject botPrefab;
 
     private void Awake()
     {
@@ -31,20 +32,25 @@ public class GameController : MonoBehaviour
     /// <param name="_name">The player's name.</param>
     /// <param name="_position">The player's starting position.</param>
     /// <param name="_rotation">The player's starting rotation.</param>
-    public void SpawnPlayer(int _id, Vector3 _position)
+    public void SpawnPlayer(int _id, Vector3 _position, bool isBot)
     {
         GameObject _player;
         if (_id == Client.instance.id)
         {
             _player = Instantiate(localPlayerPrefab, _position, new Quaternion());
         }
+        else if (isBot)
+        {
+            _player = Instantiate(botPrefab, _position, new Quaternion());
+        }
         else
         {
             _player = Instantiate(playerPrefab, _position, new Quaternion());
         }
 
+        players[_id] = _player.GetComponent<Player>();
+
         _player.GetComponent<Player>().SetUp(_id);
-        players.Add(_id, _player.GetComponent<Player>());
     }
 
     public void AddPlayer(int _id)
@@ -76,25 +82,34 @@ public class GameController : MonoBehaviour
     {
         if (players.ContainsKey(id))
         {
-            players[id].transform.position = position;
-            players[id].velocity = velocity;
+            if (players[id])
+            {
+                bool me = id == Client.instance.id;
+                bool myBot = players[id].isBot && Client.instance.isHost;
+
+                if (me || myBot)
+                    return;
+
+                players[id].transform.position = position;
+                players[id].velocity = velocity;
+            }
         }
     }
 
-    public void SynchPlayerStats(int id, bool isUFS, bool stunned, bool killed, bool isHost)
+    public void SynchPlayerStats(int id, bool isUFS, bool stunned, bool killed, bool isBot)
     {
-        if (players.ContainsKey(id))
+        if (players.ContainsKey(id) && players[id])
         {
             players[id].isUFS = isUFS;
             players[id].stunned = stunned;
             players[id].killed = killed;
-            players[id].isHost = isHost;
+            players[id].isBot = isBot;
         }
     }
 
-    public void StartGame()
+    public void SendLoadGame()
     {
-        Client.instance.StartGame();
+        Client.instance.StartLoadGame();
     }
 
     public void ConnectToRoom()
@@ -112,8 +127,20 @@ public class GameController : MonoBehaviour
         Application.Quit();
     }
 
-    public void LoadGameLevel()
+    public void OnStartLoadGameLevel()
     {
-        SceneManager.LoadScene("Game");
+        AsyncOperation loading = SceneManager.LoadSceneAsync("Game");
+        StartCoroutine(SpawnPlayers(loading));
+    }
+
+    IEnumerator SpawnPlayers(AsyncOperation loading)
+    {
+        while (!loading.isDone)
+        {
+            Debug.Log(loading.isDone);
+            yield return new WaitForSeconds(1);
+        }
+
+        Client.instance.SendReadyForPlay();
     }
 }

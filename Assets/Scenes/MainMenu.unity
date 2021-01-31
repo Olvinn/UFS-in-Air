@@ -2031,8 +2031,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913d979834483154190af1a73b937bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 100.84.229.206
-  port: 8052
+  ip: 5.141.162.8
+  port: 12664
+  isHost: 0
   id: 0
   roomId: 0
   roomCount: 0
@@ -2065,6 +2066,8 @@ MonoBehaviour:
   localPlayerPrefab: {fileID: 333458364892570682, guid: bb61d6c6e5fb656458b94c79159ad652,
     type: 3}
   playerPrefab: {fileID: 1487285210227909786, guid: 557e9a3a3d9ee014087f779a676d456f,
+    type: 3}
+  botPrefab: {fileID: 2598951891986441496, guid: 6c8c3c3f0b2fa6d4ba0e4719c62de4d2,
     type: 3}
 --- !u!1 &817695646
 GameObject:
@@ -3209,7 +3212,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 761847843}
-        m_MethodName: LoadGameScene
+        m_MethodName: SendLoadGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

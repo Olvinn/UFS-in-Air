@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
@@ -19,7 +20,10 @@ public enum Command
     disconnect,
     hit,
     ping,
-    start
+    load,
+    ready,
+    spawnPlayer,
+    botStats
 }
 
 public class Client : MonoBehaviour
@@ -29,7 +33,7 @@ public class Client : MonoBehaviour
 
     public string ip;
     public int port;
-
+    public bool isHost;
     public int id = -1;
     public int roomId = -1;
     public int roomCount = 0;
@@ -62,7 +66,8 @@ public class Client : MonoBehaviour
             { Command.synchPosPlayer, OnSynchPlayerPos },
             { Command.synchStatsPlayer, OnSynchPlayerStats },
             { Command.removePlayer, OnRemovePlayer },
-            { Command.start, OnStartGame }
+            { Command.load, OnStartLoadGame },
+            { Command.spawnPlayer, OnSpawnPlayer }
         };
 
         DontDestroyOnLoad(this.gameObject);
@@ -110,7 +115,7 @@ public class Client : MonoBehaviour
             };
 
             receiveBuffer = new byte[dataBufferSize];
-            socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+            socket.BeginConnect(IPAddress.Parse(instance.ip), instance.port, ConnectCallback, socket);
         }
 
         /// <summary>Initializes the newly connected client's TCP-related info.</summary>
@@ -303,16 +308,23 @@ public class Client : MonoBehaviour
         ThreadManager.ExecuteOnMainThread(() => GameController.instance.AddPlayer(playerId));
     }
 
-    void OnSynchPlayerPos(int id, Packet data)
+    void OnSpawnPlayer(int id, Packet data)
     {
         if (id != this.id)
             Debug.LogError("Wrong params");
 
         int playerId = data.ReadInt();
+        bool isBot = data.ReadBool();
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SpawnPlayer(playerId, Vector3.zero, isBot));
+    }
+
+    void OnSynchPlayerPos(int id, Packet data)
+    {
         Vector3 pos = data.ReadVector3();
         Vector3 velocity = data.ReadVector3();
-        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(playerId, pos, velocity));
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerPos(id, pos, velocity));
     }
+
     void OnSynchPlayerStats(int id, Packet data)
     {
         if (id != this.id)
@@ -323,7 +335,11 @@ public class Client : MonoBehaviour
         bool stunned = data.ReadBool();
         bool killed = data.ReadBool();
         bool isHost = data.ReadBool();
-        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerStats(playerId, isUFS, stunned, killed, isHost));
+        bool isBot = data.ReadBool();
+
+        if (this.id == playerId)
+            this.isHost = isHost;
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.SynchPlayerStats(playerId, isUFS, stunned, killed, isBot));
     }
 
     void OnRemovePlayer(int id, Packet data)
@@ -335,18 +351,27 @@ public class Client : MonoBehaviour
         ThreadManager.ExecuteOnMainThread(() => GameController.instance.RemovePlayer(playerId));
     }
 
-    void OnStartGame(int id, Packet data)
+    void OnStartLoadGame(int id, Packet data)
     {
         if (id != this.id)
             Debug.LogError("Wrong params");
 
-        ThreadManager.ExecuteOnMainThread(() => GameController.instance.LoadGameLevel());
+        ThreadManager.ExecuteOnMainThread(() => GameController.instance.OnStartLoadGameLevel());
     }
 
     public void SynchPlayerPos(Vector3 pos, Vector3 v)
     {
         Packet packet = new Packet(Command.synchPosPlayer);
         packet.Write(id);
+        packet.Write(pos);
+        packet.Write(v);
+        tcp.SendData(packet);
+    }
+
+    public void SynchBotPos(int bid, Vector3 pos, Vector3 v)
+    {
+        Packet packet = new Packet(Command.synchPosPlayer);
+        packet.Write(bid);
         packet.Write(pos);
         packet.Write(v);
         tcp.SendData(packet);
@@ -370,7 +395,6 @@ public class Client : MonoBehaviour
     public void ConnectToRoom()
     {
         Packet packet = new Packet(Command.connectToRoom);
-        packet.Write(id);
         packet.Write(1); // room id
         tcp.SendData(packet);
     }
@@ -378,13 +402,21 @@ public class Client : MonoBehaviour
     public void DisconnectToRoom()
     {
         Packet packet = new Packet(Command.disconnectFromRoom);
-        packet.Write(id);
         packet.Write(roomId);
         tcp.SendData(packet);
     }
 
-    public void StartGame()
+    public void StartLoadGame()
     {
+        Packet packet = new Packet(Command.load);
+        packet.Write(id);
+        tcp.SendData(packet);
+    }
 
+    public void SendReadyForPlay()
+    {
+        Packet packet = new Packet(Command.ready);
+        packet.Write(id);
+        tcp.SendData(packet);
     }
 }
