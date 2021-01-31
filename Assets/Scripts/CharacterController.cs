@@ -21,11 +21,16 @@ public class CharacterController : MonoBehaviour
     public LayerMask enemyLayers;
     public KeyCode keyCode;
 
+    [Header("Sounds")]
+    private AudioSource audioSource;
+    public AudioClip stepSound;
+
     [Header("Server")]
     [SerializeField] private Player player;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         player = GetComponent<Player>();
         animator = GetComponent<Animator>();
@@ -54,11 +59,19 @@ public class CharacterController : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        Move();
+        if(!player.stunned || !player.killed)
+            Move();
 
         if(isAttack) {
             rb.velocity = Vector2.zero;
         } 
+
+        if(rb.velocity.sqrMagnitude > 0f) {
+            audioSource.clip = stepSound;
+            audioSource.Play();
+        } else {
+            if(audioSource.isPlaying) audioSource.Stop();
+        }
     }
 
     private void ProcessInputs() {
